@@ -2,7 +2,6 @@ import os
 import tempfile
 import subprocess
 import requests
-import shutil
 
 # Set up your GitHub access token
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
@@ -27,10 +26,13 @@ def get_repositories():
 
 def update_repository(repo_url):
     """Clone the repo, create an empty commit, and push it to GitHub."""
+    # Insert the token into the repo URL for authentication
+    repo_url_with_token = repo_url.replace("https://", f"https://{GITHUB_TOKEN}@")
+    
     with tempfile.TemporaryDirectory() as temp_dir:
         try:
             # Clone the repository
-            subprocess.run(["git", "clone", repo_url, temp_dir], check=True)
+            subprocess.run(["git", "clone", repo_url_with_token, temp_dir], check=True)
             
             # Create an empty commit
             subprocess.run(["git", "-C", temp_dir, "commit", "--allow-empty", "-m", "Trigger update"], check=True)
