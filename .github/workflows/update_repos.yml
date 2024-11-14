@@ -1,0 +1,30 @@
+name: Update Repositories
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"  # Runs every 3 hours
+  workflow_dispatch:      # Allows manual triggering of the workflow
+
+jobs:
+  update_repos:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Run Update Script
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}  # Use your custom secret here
+        run: |
+          python update_repos.py
